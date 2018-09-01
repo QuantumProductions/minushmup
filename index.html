@@ -8,16 +8,33 @@
 <script src="input.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.7.1/pixi.min.js"></script>
 <script>
-var app = new PIXI.Application(600, 800, {backgroundColor : 0x333333});
-document.body.appendChild(app.view);
+const width = 600;
+const height = 900;
+
+    renderer = PIXI.autoDetectRenderer(width, height, {backgroundColor:0x333333});
+    stage = new PIXI.Stage(0x333333);
+
+    amount = (renderer instanceof PIXI.WebGLRenderer) ? 100 : 5;
+
+    if(amount == 5) {
+        renderer.context.mozImageSmoothingEnabled = false
+        renderer.context.webkitImageSmoothingEnabled = false;
+    }
+    
+    renderer.view.style["transform"] = "translatez(0)";
+    document.body.appendChild(renderer.view);
+
+    renderer.view.style.position = "absolute";
+
 var p = PIXI.Sprite.fromImage('bunny.png')
 p.anchor.set(0.5);
-p.x = app.screen.width / 2;
-p.y = app.screen.height / 2;
+
+p.x = width / 2;
+p.y = height / 2;
 p.mx = 0;
 p.my = 0;
-p.speed = 7;
-app.stage.addChild(p);
+p.speed = 0.7;
+stage.addChild(p);
 
 var b = PIXI.Sprite.fromImage('bunny.png')
 b.anchor.set(0.5);
@@ -26,13 +43,29 @@ b.y = p.y - 30;
 
 b.phase = 0;
 b.r = 90;
-b.power = 4;
+b.power = 0.4;
 
-app.stage.addChild(b);
+stage.addChild(b);
+
+lastFrameTime = Date.now();
+currentFrameTime = Date.now()
+
+function update() {
+    renderer.render(stage);
+    requestAnimationFrame(update);
+
+    lastFrameTime = currentFrameTime
+    currentFrameTime = Date.now();
+    delta = currentFrameTime - lastFrameTime;
+
+    movePlayer(delta);
+    moveBullet(delta);
+    
+}
 
 function bulletSpeedBonus() {
     if (p.mx == 0 && p.my == 0) {
-        return 8;
+        return 0.8;
     }
 
     return 0;
@@ -63,22 +96,22 @@ function movePlayer(delta) {
 
     p.x = p.x + (p.mx * delta * p.speed);
     p.x = Math.ceil(p.x, 0);
-    p.x = Math.floor(p.x, app.screen.width);
+    p.x = Math.floor(p.x, width);
 
     p.y = p.y + (p.my * delta * p.speed);
     p.y = Math.ceil(p.y, 0);
-    p.y = Math.floor(p.y, app.screen.height);
+    p.y = Math.floor(p.y, height);
 }
 
 function moveBullet(delta) {
-    applyThrust(b, b.r, (b.power + bulletSpeedBonus() * delta));
+    applyThrust(b, b.r, ((b.power + bulletSpeedBonus()) * delta));
     if (b.phase == 0) {
         if (b.y < 0) {
             b.r = getr2(center(b), center(p));
             b.phase = 1;
         }
     } else if (b.phase == 1) {
-        if (b.y + b.height > app.screen.height) {
+        if (b.y + b.height > height) {
             b.r -= 180;
             b.phase = 0;
         }
@@ -90,12 +123,15 @@ function moveBullet(delta) {
     }
 }
 
-app.ticker.add(function(delta) {
-    movePlayer(delta);
-    moveBullet(delta);
-    // p.rotation += 0.01 * delta;  
+// app.ticker.add(function(delta) {
+//     movePlayer(delta);
+//     moveBullet(delta);
+//     // p.rotation += 0.01 * delta;  
 
-});
-document.body.appendChild(app.view);
+// });
+renderer.render(stage);
+requestAnimationFrame(update);
+
+document.body.appendChild(renderer.view);
 
 </script>
