@@ -1,0 +1,40 @@
+SHMUP Minus Infinite Ammo
+      Minus Positive Scoring
+      Minus Shooting
+      Minus Void Border
+
+Ship follows your inputs
+carrying bullet -> shoot bullet
+bullet is .up
+          bullet tracks H with your ship
+          bullet .hyper when you hold still
+
+          .hyper
+          bullet accelerates V
+          bullet destroys enemy bullets
+
+          .bouncing-off-top -> aim at player ship .down
+
+          .down
+          move in straight line without turning
+          .down-hyper with player stillness
+
+          .reaching-bottom -> lose bullet, lose points, carrying bullet shoot
+
+          .hits-turret-bottom -> .up
+
+Score starts maxed 9s*
+Decreases if hit
+Decrease if lose bullet
+
+
+Enemies:
+
+Strafing  -moves H, oscillates. Shoots Tripod with center aimed 50% unaimed
+Bulky: appears in random side H top 1/3 V moves to 1/2 H, top 1/3 V. Shots coupled bullets aimed 50% un aimed
+Turret: appears bottom random H. Shoots homing bullets that move in homing bursts towards player
+
+No Destruction:
+Enemy Bullets bounce on walls
+
+Survive :::: to win
