@@ -1,12 +1,17 @@
 <html>
 <body bgcolor="#CCCCCC">
+<h1>SHMUP Minus Infinite Ammo Minus Dodging</h1>
+Made by Quantum Productions for GMTK 2018
+PIXI.js used for engine
+<a href="https://github.com/QuantumProductions/minushmup">Source</a>
+<br>
 </body>
 <script src="util.js"></script>
 <script>
 
 </script>
 <script src="input.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.7.1/pixi.min.js"></script>
+<script src="pixi.min.js"></script>
 <script>
 const width = 600;
 const height = 900;
@@ -353,7 +358,7 @@ function moveBullet(delta) {
             }
             score = 0;
             b.y = p.y;
-            p.x = p.x;
+            b.x = p.x;
         }
 
     if (getDistance(b, p) < 40) {
