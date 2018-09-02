@@ -4,7 +4,9 @@ mouse = function(e) {
 
 var mousecoords = {x: 0, y: 0};
 window.onmousemove = function(e) {
-     mousecoords = mouse(e);
+    mousecoords = mouse(e);
+    mousecoords.x -= 32;
+    mousecoords.y -= 32;
 };
 
 onKeyUp = function(event) {
