@@ -28,12 +28,13 @@ const height = 900;
 
 var p = PIXI.Sprite.fromImage('bunny.png')
 p.anchor.set(0.5);
-
+p.width = 32;
+p.height = 32;
 p.x = width / 2;
 p.y = height / 2;
 p.mx = 0;
 p.my = 0;
-p.speed = 0.7;
+p.speed = 0.4;
 stage.addChild(p);
 
 var b = PIXI.Sprite.fromImage('bunny.png')
@@ -46,7 +47,7 @@ b.height = 22;
 
 b.phase = 0;
 b.r = 90;
-b.power = 0.4;
+b.power = 0.2;
 
 stage.addChild(b);
 
@@ -57,19 +58,19 @@ function update() {
     renderer.render(stage);
     requestAnimationFrame(update);
 
-    lastFrameTime = currentFrameTime
+    lastFrameTime = currentFrameTime;
     currentFrameTime = Date.now();
     delta = currentFrameTime - lastFrameTime;
 
     movePlayer(delta);
     moveBullet(delta);
     moveEnemies(delta);
-    
+    moveBullets(delta);
 }
 
 function bulletSpeedBonus() {
     if (p.mx == 0 && p.my == 0) {
-        return 0.8;
+        return 0.3;
     }
 
     return 0;
@@ -78,6 +79,7 @@ function bulletSpeedBonus() {
 function makeEnemy(kind) {
     let e = PIXI.Sprite.fromImage('bunny.png');
     e.x = width - 50;
+    e.tick = 10;
     e.hp = 500;
     e.kind = kind;
     e.dir = -1;
@@ -89,9 +91,52 @@ function makeEnemy(kind) {
 
 var enemies = [];
 
+function shoot(e) {
+    let f = PIXI.Sprite.fromImage('bunny.png');
+    f.x = e.x;
+    f.y = e.y;
+    f.width = 6;
+    f.height = 6;
+    f.r = getr2(f, p);
+    f.power = 0.1;
+    f.offset = 0.5;
+    stage.addChild(f);
+    return f;
+}
+
+var bullets = [];
+
+function moveBullets(delta) {
+    let removals = [];
+    for (f of bullets) {
+        applyThrust(f, f.r, f.power * delta);
+    }
+    for (r of removals) {
+        bullets.splice(bullets.indexOf(r), 1);
+    }
+}
+
 function moveEnemies(delta) {
     let removals = [];
     for (e of enemies) {
+        e.tick-= delta;
+        if (e.tick < 0) {
+            e.tick = Math.random() * 999;
+            e.tick += 999;
+
+            if (e.kind == 0) {
+                let f = shoot(e);
+                bullets.push(f);
+                let f2 = shoot(e);
+                f2.r = f.r + 30;
+                bullets.push(f2);
+                let f3 = shoot(e);
+                f3.r = f.r - 30;
+                bullets.push(f3);
+                
+            }
+            
+        }
         if (e.hp < 0) {
             removals.push(e);
         }
@@ -117,14 +162,14 @@ function movePlayer(delta) {
     }
     if (key_down_map['L1'] == true) {
         p.mx = -1;
-        if (b.phase == 0) {
-            b.x = b.x - (p.speed * delta * b.dir);
-        }
+        // if (b.phase == 0) {
+            b.x = b.x - (p.speed * 0.5 * delta * b.dir);
+        // }
     } else if (key_down_map['R1'] == true) {
         p.mx = 1;
-        if (b.phase == 0) {
-            b.x = b.x + (p.speed * delta * b.dir);
-        }
+        // if (b.phase == 0) {
+            b.x = b.x + (p.speed * 0.5 * delta * b.dir);
+        // }
     } else {
         p.mx = 0;
     }
@@ -155,6 +200,16 @@ function bspeed() {
     return b.power + bulletSpeedBonus();
 }
 
+function beginSpawns() {
+    if (Math.floor(Math.random() * 2) == 0) {
+        for (let i = 0; i < Math.random() * 1; i++) {
+            let e = makeEnemy(0);
+            enemies.push(e);
+        }    
+    }
+    
+}
+
 function moveBullet(delta) {
     if (b.x < 0) {
         b.x = 0;
@@ -176,6 +231,7 @@ function moveBullet(delta) {
         if (b.y < 0) {
             b.r = getr2(center(b), center(p));
             b.phase = 1;
+            beginSpawns();
             b.dir = 1;
         }
     } else if (b.phase == 1) {
