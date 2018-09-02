@@ -114,7 +114,7 @@ function bulletSpeedBonus() {
 
 function makeEnemy(kind) {
     let e = new PIXI.Graphics();
-e.beginFill(0x778899CCFF);
+e.beginFill(0x778899);
 e.drawRect(0,0,64,64);
 e.endFill();
 
@@ -132,7 +132,11 @@ e.endFill();
 var enemies = [];
 
 function shoot(e) {
-    let f = PIXI.Sprite.fromImage('bunny.png');
+    f = new PIXI.Graphics();
+    f.beginFill(0x778899);
+    f.drawRect(0,0,6,6);
+    f .endFill();
+
     f.x = e.x;
     f.y = e.y;
     f.width = 6;
