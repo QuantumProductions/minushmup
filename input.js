@@ -1,3 +1,12 @@
+mouse = function(e) {
+  return {x: e.clientX, y: e.clientY};
+}
+
+var mousecoords = {x: 0, y: 0};
+window.onmousemove = function(e) {
+     mousecoords = mouse(e);
+};
+
 onKeyUp = function(event) {
   key_down_map[this.key_map[event.keyCode]] = false;
   key_up_map[this.key_map[event.keyCode]] = true;
@@ -10,7 +19,7 @@ onKeyDown = function(event) {
 
 addEventListener("keydown", onKeyDown, true);
 addEventListener("keyup", onKeyUp, true);
-var key_down_map = {};
+key_down_map = {};
 var key_depressing_map = {};
 var key_pressing_map = {};
 var key_up_map = {};

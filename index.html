@@ -28,6 +28,7 @@ const height = 900;
 
 var p = PIXI.Sprite.fromImage('bunny.png')
 p.anchor.set(0.5);
+p.moving = true;
 p.width = 32;
 p.height = 32;
 p.x = width / 2;
@@ -35,6 +36,7 @@ p.y = height / 2;
 p.mx = 0;
 p.my = 0;
 p.speed = 0.4;
+p.power = p.speed;
 stage.addChild(p);
 
 var b = PIXI.Sprite.fromImage('bunny.png')
@@ -69,11 +71,10 @@ function update() {
 }
 
 function bulletSpeedBonus() {
-    if (p.mx == 0 && p.my == 0) {
-        return 0.3;
+    if (p.moving) {
+        return 0;
     }
-
-    return 0;
+    return 0.3;
 }
 
 function makeEnemy(kind) {
@@ -156,6 +157,23 @@ function moveEnemies(delta) {
 }
 
 function movePlayer(delta) {
+    p.r = getr2(p, mousecoords);
+    if (getDistance(p, mousecoords) > 3) {
+        p.moving = true;
+        if (mousecoords.x > p.x) {
+            b.x = b.x + (p.power * 0.5 * delta * b.dir);
+        } else if (mousecoords.x < p.x) {
+            console.log("foo");
+            b.x = b.x - (p.power * 0.5 * delta * b.dir);
+        }
+        applyThrust(p, p.r, p.power * delta);
+    } else {
+        p.moving = false;
+    }
+    
+    
+
+    
     if (key_down_map['A1'] == true) {
         let e = makeEnemy(0);
         enemies.push(e);
@@ -163,12 +181,12 @@ function movePlayer(delta) {
     if (key_down_map['L1'] == true) {
         p.mx = -1;
         // if (b.phase == 0) {
-            b.x = b.x - (p.speed * 0.5 * delta * b.dir);
+            
         // }
     } else if (key_down_map['R1'] == true) {
         p.mx = 1;
         // if (b.phase == 0) {
-            b.x = b.x + (p.speed * 0.5 * delta * b.dir);
+            
         // }
     } else {
         p.mx = 0;
